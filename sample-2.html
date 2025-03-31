@@ -132,6 +132,53 @@
       z-index: 1001;
     }
 
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 700px;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: #666;
+    }
+
     .form-modal {
       display: none;
       position: fixed;
@@ -184,13 +231,6 @@
       font-size: 1.5rem;
       cursor: pointer;
     }
-
-    footer {
-      margin-top: 3rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #555;
-    }
   </style>
 </head>
 <body>
@@ -210,18 +250,42 @@
 
   <div class="toast" id="toast"></div>
 
+  <!-- Ghibli Style Modal -->
+  <div id="ghibliModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h2>What is "Ghibli Style"?</h2>
+      <p><strong>Ghibli style</strong> refers to the distinctive visual and emotional aesthetic used by <strong>Studio Ghibli</strong>, a world-renowned Japanese animation studio co-founded by <em>Hayao Miyazaki</em> in 1985. The studio is known for beloved films like:</p>
+      <ul>
+        <li>Spirited Away</li>
+        <li>My Neighbor Totoro</li>
+        <li>Princess Mononoke</li>
+        <li>Howl's Moving Castle</li>
+      </ul>
+      <p><strong>Key traits include:</strong></p>
+      <ul>
+        <li>Soft, hand-painted look with warm tones</li>
+        <li>Detailed natural environments (forests, skies, homes)</li>
+        <li>A blend of whimsy and real life</li>
+        <li>Emotional depth and human-centered storytelling</li>
+      </ul>
+      <p>This style evokes calm, warmth, and authenticity, making it ideal for wellness, family, nature, and emotionally rich storytelling websites.</p>
+    </div>
+  </div>
+
+  <!-- Interest Form Modal -->
   <div class="form-modal" id="interestForm">
     <div class="form-modal-content">
       <span class="close-form" onclick="document.getElementById('interestForm').style.display='none'">&times;</span>
-      <form id="submissionForm">
+      <form id="submissionForm" autocomplete="on">
         <label for="username">Name*</label>
-        <input type="text" id="username" name="username" required />
+        <input type="text" id="username" name="username" required autocomplete="name" />
 
         <label for="email">Email*</label>
-        <input type="email" id="email" name="email" required />
+        <input type="email" id="email" name="email" required autocomplete="email" />
 
         <label for="phone">Phone Number*</label>
-        <input type="tel" id="phone" name="phone" required />
+        <input type="tel" id="phone" name="phone" required autocomplete="tel" />
 
         <label for="message">Message</label>
         <textarea id="message" name="message" rows="4" readonly></textarea>
@@ -253,8 +317,28 @@
     let currentPlanKey = '';
 
     const storageKey = 'submittedInterests';
-    const savedSubmissions = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    let savedSubmissions = JSON.parse(localStorage.getItem(storageKey) || '{}');
 
+    // Set up Ghibli modal
+    const modal = document.getElementById("ghibliModal");
+    const openModalBtn = document.getElementById("openModal");
+    const closeModalBtn = document.getElementById("closeModal");
+
+    openModalBtn.onclick = () => {
+      modal.style.display = "block";
+    };
+
+    closeModalBtn.onclick = () => {
+      modal.style.display = "none";
+    };
+
+    window.onclick = (event) => {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+
+    // Create cards
     Object.entries(imageData).forEach(([name, description], index) => {
       const imageUrl = `https://raw.githubusercontent.com/anandvip/rekha-harmony-plan-ca/main/assets/${name}.jpg`;
       const img = new Image();
@@ -284,11 +368,11 @@
           messageField.value = `${title.textContent}\n${description}`;
           formModal.style.display = 'block';
 
-          const userData = JSON.parse(localStorage.getItem('userInfo'));
+          const userData = JSON.parse(localStorage.getItem('userInfo') || '{}');
           if (userData) {
-            form.username.value = userData.name;
-            form.email.value = userData.email;
-            form.phone.value = userData.phone;
+            form.username.value = userData.name || '';
+            form.email.value = userData.email || '';
+            form.phone.value = userData.phone || '';
           }
         };
 
@@ -299,6 +383,59 @@
         card.appendChild(content);
         grid.appendChild(card);
 
+        card.addEventListener('click', () => {
+          card.classList.toggle('active');
+        });
+      };
+
+      img.onerror = () => {
+        console.warn(`Image failed to load: ${imageUrl}`);
+        
+        // Create card even when image fails to load
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.animationDelay = `${index * 0.1}s`;
+        
+        // Create a placeholder image
+        const placeholderImg = document.createElement('img');
+        placeholderImg.alt = name.replace(/[-_]/g, ' ');
+        placeholderImg.src = `/api/placeholder/400/300`;
+        
+        const content = document.createElement('div');
+        content.className = 'card-content';
+        
+        const title = document.createElement('h3');
+        title.textContent = name.replace(/[-_]/g, ' ');
+        
+        const details = document.createElement('p');
+        details.className = 'card-details';
+        details.textContent = description;
+        
+        const ctaButton = document.createElement('button');
+        ctaButton.className = 'cta-button';
+        ctaButton.textContent = 'Yes, I am interested in this';
+        
+        ctaButton.onclick = (e) => {
+          e.stopPropagation();
+          currentPlanKey = name;
+          messageField.value = `${title.textContent}\n${description}`;
+          formModal.style.display = 'block';
+          
+          const userData = JSON.parse(localStorage.getItem('userInfo') || '{}');
+          if (userData) {
+            form.username.value = userData.name || '';
+            form.email.value = userData.email || '';
+            form.phone.value = userData.phone || '';
+          }
+        };
+        
+        content.appendChild(title);
+        content.appendChild(details);
+        content.appendChild(ctaButton);
+        card.appendChild(placeholderImg);
+        card.appendChild(content);
+        grid.appendChild(card);
+        
         card.addEventListener('click', () => {
           card.classList.toggle('active');
         });
@@ -316,6 +453,8 @@
       if (!name || !email || !phone || !consent) return;
 
       const submissionKey = `${email}_${currentPlanKey}`;
+
+      savedSubmissions = JSON.parse(localStorage.getItem(storageKey) || '{}');
 
       if (savedSubmissions[submissionKey]) {
         showToast('You have already submitted for this plan.');
@@ -340,5 +479,3 @@
   </script>
 </body>
 </html>
-
-
