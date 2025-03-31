@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rekha Harmony Plan CA</title>
   <style>
     * {
@@ -20,10 +20,25 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       font-size: 1.5rem;
       max-width: 800px;
       margin-inline: auto;
+    }
+
+    .info-btn {
+      display: block;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #6c63ff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
     .grid {
@@ -74,13 +89,50 @@
         transform: translateY(0);
       }
     }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 700px;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      color: #666;
+    }
   </style>
 </head>
 <body>
-
   <h1>
     Prepared for selecting theme and mood of the page for client name: <strong>Rekha Kumar</strong> (insurance agent in Ontario, Canada), seeking client's approval prior to finalizing the single page site with database connection at Firebase Firestore for customer data captured online by the insurance agent for follow-up on leads generation and expanding customer base in Ontario.
   </h1>
+
+  <div class="info-btn">
+    <button id="openModal">What does "Ghibli Style" mean?</button>
+  </div>
 
   <div class="grid" id="imageGrid"></div>
 
@@ -88,49 +140,86 @@
     Prepared by Vipul Anand [Web Developer], India, Haryana, Kurukshetra
   </footer>
 
-<script>
-  const imageNames = [
-    'critical',
-    'disabilty',
-    'happycouple',
-    'parent',
-    'travelinsurance',
-    'visitor-insurance'
-  ];
+  <!-- Modal Structure -->
+  <div id="ghibliModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeModal">&times;</span>
+      <h2>What is "Ghibli Style"?</h2>
+      <p><strong>Ghibli style</strong> refers to the distinctive visual and emotional aesthetic used by <strong>Studio Ghibli</strong>, a world-renowned Japanese animation studio co-founded by <em>Hayao Miyazaki</em> in 1985. The studio is known for beloved films like:</p>
+      <ul>
+        <li>Spirited Away</li>
+        <li>My Neighbor Totoro</li>
+        <li>Princess Mononoke</li>
+        <li>Howl’s Moving Castle</li>
+      </ul>
+      <p><strong>Key traits include:</strong></p>
+      <ul>
+        <li>Soft, hand-painted look with warm tones</li>
+        <li>Detailed natural environments (forests, skies, homes)</li>
+        <li>A blend of whimsy and real life</li>
+        <li>Emotional depth and human-centered storytelling</li>
+      </ul>
+      <p>This style evokes calm, warmth, and authenticity, making it ideal for wellness, family, nature, and emotionally rich storytelling websites.</p>
+    </div>
+  </div>
 
-  const grid = document.getElementById('imageGrid');
+  <script>
+    const imageNames = [
+      'critical',
+      'disabilty',
+      'happycouple',
+      'parent',
+      'travelinsurance',
+      'visitor-insurance'
+    ];
 
-  imageNames.forEach((name, index) => {
-    const imageUrl = `https://raw.githubusercontent.com/anandvip/rekha-harmony-plan-ca/main/assets/${name}.jpg`;
+    const grid = document.getElementById('imageGrid');
 
-    const img = new Image();
-    img.src = imageUrl;
-    img.alt = name;
+    imageNames.forEach((name, index) => {
+      const imageUrl = `https://raw.githubusercontent.com/anandvip/rekha-harmony-plan-ca/main/assets/${name}.jpg`;
+      const img = new Image();
+      img.src = imageUrl;
+      img.alt = name;
 
-    img.onload = () => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.style.animationDelay = `${index * 0.1}s`;
+      img.onload = () => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.animationDelay = `${index * 0.1}s`;
 
-      const content = document.createElement('div');
-      content.className = 'card-content';
-      const title = document.createElement('h3');
-      title.textContent = name.replace(/[-_]/g, ' ');
-      content.appendChild(title);
+        const content = document.createElement('div');
+        content.className = 'card-content';
+        const title = document.createElement('h3');
+        title.textContent = name.replace(/[-_]/g, ' ');
+        content.appendChild(title);
 
-      card.appendChild(img);
-      card.appendChild(content);
-      grid.appendChild(card);
+        card.appendChild(img);
+        card.appendChild(content);
+        grid.appendChild(card);
+      };
+
+      img.onerror = () => {
+        console.warn(`Image failed to load: ${imageUrl}`);
+      };
+    });
+
+    // Modal logic
+    const modal = document.getElementById("ghibliModal");
+    const openModalBtn = document.getElementById("openModal");
+    const closeModalBtn = document.getElementById("closeModal");
+
+    openModalBtn.onclick = () => {
+      modal.style.display = "block";
     };
 
-    img.onerror = () => {
-      console.warn(`❌ Image failed to load: ${imageUrl}`);
-      // Optional: Show a placeholder image instead
-      // img.src = 'https://via.placeholder.com/300x400?text=Not+Found';
+    closeModalBtn.onclick = () => {
+      modal.style.display = "none";
     };
-  });
-</script>
 
-
+    window.onclick = (event) => {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+  </script>
 </body>
 </html>
