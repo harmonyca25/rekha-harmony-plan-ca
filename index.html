@@ -88,26 +88,29 @@
     Prepared by Vipul Anand [Web Developer], India, Haryana, Kurukshetra
   </footer>
 
-  <script>
-    const imageNames = [
-      'critical',
-      'disabilty',
-      'happycouple',
-      'parent',
-      'travelinsurance',
-      'visitor-insurance'
-    ];
+<script>
+  const imageNames = [
+    'critical',
+    'disabilty',
+    'happycouple',
+    'parent',
+    'travelinsurance',
+    'visitor-insurance'
+  ];
 
-    const grid = document.getElementById('imageGrid');
+  const grid = document.getElementById('imageGrid');
 
-    imageNames.forEach((name, index) => {
+  imageNames.forEach((name, index) => {
+    const imageUrl = `https://raw.githubusercontent.com/anandvip/rekha-harmony-plan-ca/main/assets/${name}.jpg`;
+
+    const img = new Image();
+    img.src = imageUrl;
+    img.alt = name;
+
+    img.onload = () => {
       const card = document.createElement('div');
       card.className = 'card';
       card.style.animationDelay = `${index * 0.1}s`;
-
-      const img = document.createElement('img');
-      img.src = `https://raw.githubusercontent.com/anandvip/rekha-harmony-plan-ca/main/assets/${name}.jpg`;
-      img.alt = name;
 
       const content = document.createElement('div');
       content.className = 'card-content';
@@ -118,7 +121,16 @@
       card.appendChild(img);
       card.appendChild(content);
       grid.appendChild(card);
-    });
-  </script>
+    };
+
+    img.onerror = () => {
+      console.warn(`❌ Image failed to load: ${imageUrl}`);
+      // Optional: Show a placeholder image instead
+      // img.src = 'https://via.placeholder.com/300x400?text=Not+Found';
+    };
+  });
+</script>
+
+
 </body>
 </html>
