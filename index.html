@@ -57,6 +57,13 @@
       opacity: 0;
       transform: translateY(20px);
       animation: fadeIn 0.6s ease-out forwards;
+      transition: transform 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
     }
 
     .card img {
@@ -74,6 +81,30 @@
       text-transform: capitalize;
       font-size: 1.1rem;
       font-weight: 600;
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+
+    .card-content h3::after {
+      content: '\2139';
+      font-size: 0.9rem;
+      color: #999;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+
+    .card-content p {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 0.5rem;
+    }
+
+    .card-details {
+      display: none;
+    }
+
+    .card.active .card-details {
+      display: block;
     }
 
     footer {
@@ -90,7 +121,6 @@
       }
     }
 
-    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -140,7 +170,6 @@
     Prepared by Vipul Anand [Web Developer], India, Haryana, Kurukshetra
   </footer>
 
-  <!-- Modal Structure -->
   <div id="ghibliModal" class="modal">
     <div class="modal-content">
       <span class="close" id="closeModal">&times;</span>
@@ -164,18 +193,18 @@
   </div>
 
   <script>
-    const imageNames = [
-      'critical',
-      'disabilty',
-      'happycouple',
-      'parent',
-      'travelinsurance',
-      'visitor-insurance'
-    ];
+    const imageData = {
+      'critical': 'A plan that covers unforeseen critical illnesses with financial protection for treatment and recovery.',
+      'disabilty': 'Provides income replacement and support if the client is unable to work due to injury or illness.',
+      'happycouple': 'Life insurance tailored for couples planning their financial future and family security.',
+      'parent': 'Insurance designed for aging parents to manage healthcare costs and provide peace of mind.',
+      'travelinsurance': 'Covers medical emergencies and travel disruptions while clients explore the world.',
+      'visitor-insurance': 'Protects visiting family or friends with temporary health insurance during their stay.'
+    };
 
     const grid = document.getElementById('imageGrid');
 
-    imageNames.forEach((name, index) => {
+    Object.entries(imageData).forEach(([name, description], index) => {
       const imageUrl = `https://raw.githubusercontent.com/anandvip/rekha-harmony-plan-ca/main/assets/${name}.jpg`;
       const img = new Image();
       img.src = imageUrl;
@@ -190,11 +219,20 @@
         content.className = 'card-content';
         const title = document.createElement('h3');
         title.textContent = name.replace(/[-_]/g, ' ');
-        content.appendChild(title);
 
+        const details = document.createElement('p');
+        details.className = 'card-details';
+        details.textContent = description;
+
+        content.appendChild(title);
+        content.appendChild(details);
         card.appendChild(img);
         card.appendChild(content);
         grid.appendChild(card);
+
+        card.addEventListener('click', () => {
+          card.classList.toggle('active');
+        });
       };
 
       img.onerror = () => {
@@ -202,7 +240,6 @@
       };
     });
 
-    // Modal logic
     const modal = document.getElementById("ghibliModal");
     const openModalBtn = document.getElementById("openModal");
     const closeModalBtn = document.getElementById("closeModal");
